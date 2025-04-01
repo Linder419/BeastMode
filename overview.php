@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT * FROM trainingseinheiten WHERE user_id = :user_id ORDER BY datum DESC, uebung, saetze");
+    
+    $stmt = $pdo->prepare("SELECT * FROM trainingseinheiten WHERE user_id = :user_id ORDER BY datum DESC, saetze ASC");
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->execute();
     $eintraege = $stmt->fetchAll(PDO::FETCH_ASSOC);
