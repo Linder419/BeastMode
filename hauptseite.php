@@ -126,6 +126,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .action-btn:hover {
             background-color: #b30000;
         }
+        .header {
+            background-color: #222;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+            position: relative;
+        }
+        .home-button {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .home-button:hover {
+            background-color: #b30000;
+        }
+
     </style>
     <script>
         function addExercise() {
@@ -171,7 +195,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="header">
         <img src="logo.png" alt="BeastMode Logo">
         <h1>BeastMode</h1>
+        <a href="OrdnerHaupt/index.html" class="home-button">Zur Hauptseite</a>
     </div>
+
 
     <div class="main-content">
         <h2>Trainingseintrag</h2>

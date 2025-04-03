@@ -4,7 +4,7 @@ require_once('dbConnection.php');
 
 // Benutzer wird weitergeleitet, wenn er bereits eingeloggt ist
 if (isset($_SESSION['user_id'])) {
-    header('Location: hauptseite.php');
+    header('Location: OrdnerHaupt/index.html');
     exit();
 }
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     setcookie('benutzername', $username, time()+3600);
                     setcookie('benutzer_id', $user['id'], time()+3600);
                     
-                    header('Location: hauptseite.php');
+                    header('Location: OrdnerHaupt/index.html');
                     exit();
                 } else {
                     $error = "Benutzername, E-Mail oder Passwort ist falsch.";

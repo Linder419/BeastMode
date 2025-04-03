@@ -173,7 +173,7 @@ try {
     <div class="header">
         <img src="logo.png" alt="BeastMode Logo">
         <h1>BeastMode</h1>
-        <a href="hauptseite.php" class="home-button">Zur Hauptseite</a>
+        <a href="OrdnerHaupt/index.html" class="home-button">Zur Hauptseite</a>
     </div>
 
 
