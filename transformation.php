@@ -88,6 +88,12 @@ $bilder = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 0;
         }
 
+        .page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
         .header {
             background-color: #222;
             color: white;
@@ -114,7 +120,7 @@ $bilder = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         .home-button {
             position: absolute;
-            right: 30px;
+            right: 60px;
             top: 50%;
             transform: translateY(-50%);
             background-color: red;
@@ -130,6 +136,7 @@ $bilder = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         .main-content {
+            flex: 1;
             max-width: 900px;
             margin: 40px auto;
             padding: 20px;
@@ -194,11 +201,13 @@ $bilder = $stmt->fetchAll(PDO::FETCH_ASSOC);
             text-align: center;
             padding: 30px;
             color: white;
-            margin-top: 60px;
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
+<div class="page-container">
+
     <div class="header">
         <img src="logo.png" alt="BeastMode Logo">
         <h1>BeastMode</h1>
@@ -244,5 +253,7 @@ $bilder = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="footer">
         Entwickelt mit 💪 von Tobias Linder & Aaron Hubmann
     </div>
+
+</div>
 </body>
 </html>

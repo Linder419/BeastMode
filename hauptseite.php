@@ -32,14 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $stmt = $pdo->prepare("INSERT INTO trainingseinheiten (user_id, uebung, saetze, gewicht, wiederholungen, datum) 
                         VALUES (:user_id, :uebung, :saetze, :gewicht, :wiederholungen, NOW())");
-                    
+
                     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
                     $stmt->bindParam(':uebung', $uebung, PDO::PARAM_STR);
                     $stmt->bindParam(':saetze', $saetze, PDO::PARAM_INT);
                     $stmt->bindParam(':gewicht', $gewicht, PDO::PARAM_INT);
                     $stmt->bindParam(':wiederholungen', $wiederholungen, PDO::PARAM_INT);
                     $stmt->execute();
-                    
+
                 } catch (PDOException $e) {
                     $error = "Datenbankfehler: " . htmlspecialchars($e->getMessage());
                 }
@@ -65,28 +65,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
             min-height: 100vh;
         }
-        .header, .footer {
-            width: 100%;
+        .header {
             background-color: #222;
+            color: white;
+            padding: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 30px;
             box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+            gap: 20px;
+            position: relative;
         }
         .header img {
-            height: 100px;
-            margin-right: 20px;
+            height: 80px;
         }
         .header h1 {
-            color: white;
-            font-size: 3em;
-            font-weight: bold;
+            font-size: 2.5em;
             text-transform: uppercase;
+            margin: 0;
+            color: white;
+        }
+        .home-button {
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .home-button:hover {
+            background-color: #b30000;
         }
         .main-content {
             width: 80%;
@@ -96,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 5px 20px rgba(255, 0, 0, 0.5);
-            margin: 40px 0;
+            margin: 40px auto;
         }
         .exercise-block, .satz-block {
             display: flex;
@@ -126,30 +140,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .action-btn:hover {
             background-color: #b30000;
         }
-        .header {
+        .footer {
             background-color: #222;
-            color: white;
-            padding: 30px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
-            position: relative;
-        }
-        .home-button {
-            position: absolute;
-            right: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: red;
+            padding: 30px;
             color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
+            margin-top: auto;
         }
-        .home-button:hover {
-            background-color: #b30000;
-        }
-
     </style>
     <script>
         function addExercise() {
@@ -197,7 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>BeastMode</h1>
         <a href="OrdnerHaupt/index.html" class="home-button">Zur Hauptseite</a>
     </div>
-
 
     <div class="main-content">
         <h2>Trainingseintrag</h2>

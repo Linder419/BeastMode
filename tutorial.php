@@ -38,16 +38,14 @@ function convertToEmbed($url) {
 
         .header {
             background-color: #222;
+            color: white;
             padding: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
             gap: 20px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
+            position: relative;
         }
 
         .header img {
@@ -64,7 +62,7 @@ function convertToEmbed($url) {
 
         .home-button {
             position: absolute;
-            right: 30px;
+            right: 60px;
             top: 50%;
             transform: translateY(-50%);
             background-color: red;
@@ -81,7 +79,7 @@ function convertToEmbed($url) {
 
         .main-content {
             max-width: 1000px;
-            margin: 160px auto 80px;
+            margin: 40px auto;
             padding: 20px;
             text-align: center;
         }
@@ -146,9 +144,7 @@ function convertToEmbed($url) {
             text-align: center;
             padding: 30px;
             color: white;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            margin-top: 60px;
         }
     </style>
 </head>

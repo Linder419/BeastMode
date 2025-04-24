@@ -60,24 +60,25 @@ try {
             background-color: #222;
             color: white;
             padding: 30px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+            gap: 20px;
             position: relative;
         }
         .header img {
             height: 80px;
-            vertical-align: middle;
-            margin-right: 20px;
         }
         .header h1 {
-            display: inline-block;
-            vertical-align: middle;
             font-size: 2.5em;
             text-transform: uppercase;
+            margin: 0;
+            color: white;
         }
         .home-button {
             position: absolute;
-            right: 30px;
+            right: 60px;
             top: 50%;
             transform: translateY(-50%);
             background-color: red;
@@ -180,9 +181,9 @@ try {
         .footer {
             background-color: #222;
             color: white;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 -4px 8px rgba(255, 0, 0, 0.3);
+            margin-top: auto;
         }
     </style>
 </head>
@@ -208,38 +209,38 @@ try {
         <?php else: ?>
             <table>
                 <thead>
-                <tr>
-                    <th>Datum</th>
-                    <th>Übung</th>
-                    <th>Gewicht (kg)</th>
-                    <th>Wdh.</th>
-                    <th>Satz</th>
-                    <th>Aktion</th>
-                </tr>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Übung</th>
+                        <th>Gewicht (kg)</th>
+                        <th>Wdh.</th>
+                        <th>Satz</th>
+                        <th>Aktion</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <?php 
-                $last_uebung = null;
-                foreach ($eintraege as $eintrag): 
-                    if ($last_uebung !== null && $last_uebung !== $eintrag['uebung']) {
-                        echo '<tr class="spacer-row"><td colspan="6"></td></tr>';
-                    }
-                    $last_uebung = $eintrag['uebung'];
-                ?>
-                    <tr>
-                        <td><?= htmlspecialchars(date("d.m.Y H:i", strtotime($eintrag['datum']))) ?></td>
-                        <td><?= htmlspecialchars($eintrag['uebung']) ?></td>
-                        <td><?= htmlspecialchars($eintrag['gewicht']) ?></td>
-                        <td><?= htmlspecialchars($eintrag['wiederholungen']) ?></td>
-                        <td><?= htmlspecialchars($eintrag['saetze']) ?></td>
-                        <td>
-                            <form method="POST" class="delete-form" onsubmit="return confirm('Eintrag wirklich löschen?');">
-                                <input type="hidden" name="delete_id" value="<?= $eintrag['id'] ?>">
-                                <button type="submit" class="delete-btn">löschen</button>
-                            </form>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+                    <?php 
+                    $last_uebung = null;
+                    foreach ($eintraege as $eintrag): 
+                        if ($last_uebung !== null && $last_uebung !== $eintrag['uebung']) {
+                            echo '<tr class="spacer-row"><td colspan="6"></td></tr>';
+                        }
+                        $last_uebung = $eintrag['uebung'];
+                    ?>
+                        <tr>
+                            <td><?= htmlspecialchars(date("d.m.Y H:i", strtotime($eintrag['datum']))) ?></td>
+                            <td><?= htmlspecialchars($eintrag['uebung']) ?></td>
+                            <td><?= htmlspecialchars($eintrag['gewicht']) ?></td>
+                            <td><?= htmlspecialchars($eintrag['wiederholungen']) ?></td>
+                            <td><?= htmlspecialchars($eintrag['saetze']) ?></td>
+                            <td>
+                                <form method="POST" class="delete-form" onsubmit="return confirm('Eintrag wirklich löschen?');">
+                                    <input type="hidden" name="delete_id" value="<?= $eintrag['id'] ?>">
+                                    <button type="submit" class="delete-btn">löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>

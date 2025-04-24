@@ -2,13 +2,11 @@
 session_start();
 require_once('dbConnection.php');
 
-// Benutzer wird weitergeleitet, wenn er bereits eingeloggt ist
 if (isset($_SESSION['user_id'])) {
     header('Location: hauptseite.php');
     exit();
 }
 
-// Registrierung-Logik
 $error = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
@@ -57,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -65,47 +62,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BeastMode Registrierung</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #111;
-            color: #fff;
+        html, body {
             margin: 0;
             padding: 0;
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            height: 100%;
+        }
+        .page-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
             min-height: 100vh;
         }
         .header {
-            width: 100%;
             background-color: #222;
             display: flex;
             align-items: center;
+            justify-content: center;
+            gap: 20px;
             padding: 30px;
             box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
-            justify-content: center;
-            margin-bottom: 40px;
         }
         .header img {
-            height: 100px;
-            margin-right: 20px;
+            height: 80px;
         }
         .header h1 {
-            color: white;
-            font-size: 3em;
-            margin: 0;
-            font-weight: bold;
+            font-size: 2.5em;
             text-transform: uppercase;
+            margin: 0;
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
         }
         .register-form {
             background: #222;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(255, 0, 0, 0.5);
-            width: 400px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            margin-bottom: 40px;
         }
         .register-form h2 {
             margin-bottom: 20px;
@@ -156,13 +157,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: underline;
         }
         .footer {
-            width: 100%;
             background-color: #222;
             color: white;
             text-align: center;
             padding: 30px;
-            box-shadow: 0 -4px 8px rgba(255, 0, 0, 0.3);
-            font-size: 1em;
         }
         .footer span {
             color: red;
@@ -171,28 +169,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
+<div class="page-container">
     <div class="header">
         <img src="logo.png" alt="BeastMode Logo">
         <h1>BeastMode</h1>
     </div>
-    
-    <div class="register-form">
-        <h2>Registrierung</h2>
-        <?php if (!empty($error)) { echo "<p class='error'>" . htmlspecialchars($error) . "</p>"; } ?>
-        <form action="" method="POST">
-            <input type="text" name="username" placeholder="Benutzername" required>
-            <input type="email" name="email" placeholder="E-Mail-Adresse" required>
-            <input type="password" name="password" placeholder="Passwort" required>
-            <input type="password" name="password_confirm" placeholder="Passwort bestätigen" required>
-            <button type="submit">Registrieren</button>
-        </form>
-        <div class="register-link">
-            <p>Bereits ein Konto? <a href="login.php">Einloggen</a></p>
+
+    <div class="main-content">
+        <div class="register-form">
+            <h2>Registrierung</h2>
+            <?php if (!empty($error)) { echo "<p class='error'>" . htmlspecialchars($error) . "</p>"; } ?>
+            <form method="POST">
+                <input type="text" name="username" placeholder="Benutzername" required>
+                <input type="email" name="email" placeholder="E-Mail-Adresse" required>
+                <input type="password" name="password" placeholder="Passwort" required>
+                <input type="password" name="password_confirm" placeholder="Passwort bestätigen" required>
+                <button type="submit">Registrieren</button>
+            </form>
+            <div class="register-link">
+                <p>Bereits ein Konto? <a href="login.php">Einloggen</a></p>
+            </div>
         </div>
     </div>
-    
+
     <div class="footer">
         Entwickelt mit 💪 von <span>Tobias Linder</span> & <span>Aaron Hubmann</span>
     </div>
+</div>
 </body>
 </html>
