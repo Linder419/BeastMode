@@ -28,12 +28,23 @@ function convertToEmbed($url) {
     <meta charset="UTF-8">
     <title>Tutorials – BeastMode</title>
     <style>
-        body {
-            background-color: #111;
-            color: white;
-            font-family: Arial, sans-serif;
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: white;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .header {
@@ -43,9 +54,10 @@ function convertToEmbed($url) {
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
             gap: 20px;
             position: relative;
+            /* Kein roter Schatten */
+            box-shadow: none;
         }
 
         .header img {
@@ -82,6 +94,7 @@ function convertToEmbed($url) {
             margin: 40px auto;
             padding: 20px;
             text-align: center;
+            flex: 1;
         }
 
         .search-bar {
@@ -144,7 +157,7 @@ function convertToEmbed($url) {
             text-align: center;
             padding: 30px;
             color: white;
-            margin-top: 60px;
+            margin-top: 40px;
         }
     </style>
 </head>
