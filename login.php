@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Bitte eine gültige E-Mail-Adresse eingeben.";
         } else {
             try {
-                $stmt = $pdo->prepare("SELECT id, passwort FROM benutzer WHERE benutzername = :username AND email = :email");
+                $stmt = $pdo->prepare("SELECT id, passwort, ist_premium FROM benutzer WHERE benutzername = :username AND email = :email");
                 $stmt->bindParam(':username', $username, PDO::PARAM_STR);
                 $stmt->bindParam(':email', $email, PDO::PARAM_STR);
                 $stmt->execute();
@@ -28,11 +28,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($user && password_verify($password, $user['passwort'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
+                    $_SESSION['ist_premium'] = $user['ist_premium']; // merken!
 
                     setcookie('benutzername', $username, time() + 3600);
                     setcookie('benutzer_id', $user['id'], time() + 3600);
 
-                    header('Location: OrdnerHaupt/index.html');
+                    if ($user['ist_premium'] == 1) {
+                        header('Location: ../premium_home.php');
+                    } else {
+                        header('Location: OrdnerHaupt/index.html');
+                    }
                     exit();
                 } else {
                     $error = "Benutzername, E-Mail oder Passwort ist falsch.";
@@ -152,6 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
             text-align: center;
             padding: 30px;
+            box-shadow: 0 -4px 8px <?= $shadow_color ?>;
         }
         .footer span {
             color: red;

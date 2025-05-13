@@ -8,6 +8,13 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Premium-Check
+$is_premium = isset($_SESSION['ist_premium']) && $_SESSION['ist_premium'] == 1;
+$logo = $is_premium ? 'premium.png' : 'logo.png';
+$main_color = $is_premium ? 'gold' : 'red';
+$shadow_color = $is_premium ? 'gold' : 'red';
+$home_link = $is_premium ? 'premium_home.php' : 'OrdnerHaupt/index.html';
+
 // Fehler-Variable
 $error = "";
 
@@ -19,7 +26,7 @@ $uebungen = [
 ];
 
 // Speichern
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['uebungen'])) {
     $user_id = $_SESSION['user_id'];
 
     foreach ($_POST['uebungen'] as $index => $uebung) {
@@ -29,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($gewicht) && !empty($wiederholungen) && is_numeric($gewicht) && is_numeric($wiederholungen)) {
                 try {
                     $saetze = $satzIndex + 1;
-
                     $stmt = $pdo->prepare("INSERT INTO trainingseinheiten (user_id, uebung, saetze, gewicht, wiederholungen, datum) 
                         VALUES (:user_id, :uebung, :saetze, :gewicht, :wiederholungen, NOW())");
 
@@ -55,12 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trainingseintrag</title>
+    <title>Trainingseintrag – BeastMode</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #111;
-            color: #fff;
+            color: white;
             margin: 0;
             padding: 0;
             display: flex;
@@ -69,13 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .header {
             background-color: #222;
-            color: white;
             padding: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
             gap: 20px;
+            box-shadow: 0 4px 8px <?= $shadow_color ?>;
             position: relative;
         }
         .header img {
@@ -85,14 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 2.5em;
             text-transform: uppercase;
             margin: 0;
-            color: white;
         }
         .home-button {
             position: absolute;
             right: 60px;
             top: 50%;
             transform: translateY(-50%);
-            background-color: red;
+            background-color: <?= $main_color ?>;
             color: white;
             padding: 10px 20px;
             text-decoration: none;
@@ -100,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: bold;
         }
         .home-button:hover {
-            background-color: #b30000;
+            background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>;
         }
         .main-content {
             width: 80%;
@@ -109,8 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 40px;
             border-radius: 12px;
             text-align: center;
-            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.5);
+            box-shadow: 0 5px 20px <?= $shadow_color ?>;
             margin: 40px auto;
+            flex: 1;
         }
         .exercise-block, .satz-block {
             display: flex;
@@ -121,14 +126,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         select, input {
             padding: 8px;
-            border: 2px solid red;
+            border: 2px solid <?= $main_color ?>;
             border-radius: 6px;
             background: #111;
-            color: #fff;
+            color: white;
             font-size: 1em;
         }
         .action-btn {
-            background-color: red;
+            background-color: <?= $main_color ?>;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -138,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-top: 10px;
         }
         .action-btn:hover {
-            background-color: #b30000;
+            background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>;
         }
         .footer {
             background-color: #222;
@@ -146,6 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 30px;
             color: white;
             margin-top: auto;
+            box-shadow: 0 -4px 8px <?= $shadow_color ?>;
         }
     </style>
     <script>
@@ -189,23 +195,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </head>
 <body>
-    <div class="header">
-        <img src="logo.png" alt="BeastMode Logo">
-        <h1>BeastMode</h1>
-        <a href="OrdnerHaupt/index.html" class="home-button">Zur Hauptseite</a>
-    </div>
+<div class="header">
+    <img src="<?= $logo ?>" alt="BeastMode Logo">
+    <h1>BeastMode</h1>
+    <a href="<?= $home_link ?>" class="home-button">Zur Hauptseite</a>
+</div>
 
-    <div class="main-content">
-        <h2>Trainingseintrag</h2>
-        <form action="" method="POST">
-            <div id="exercise-container"></div>
-            <button type="button" class="action-btn" onclick="addExercise()">Übung hinzufügen</button>
-            <button type="submit" class="action-btn">Speichern</button>
-        </form>
-    </div>
+<div class="main-content">
+    <h2>Trainingseintrag</h2>
+    <form action="" method="POST">
+        <div id="exercise-container"></div>
+        <button type="button" class="action-btn" onclick="addExercise()">Übung hinzufügen</button>
+        <button type="submit" class="action-btn">Speichern</button>
+    </form>
+</div>
 
-    <div class="footer">
-        Entwickelt mit 💪 von Tobias Linder & Aaron Hubmann
-    </div>
+<div class="footer">
+    Entwickelt mit 💪 von Tobias Linder & Aaron Hubmann
+</div>
 </body>
 </html>

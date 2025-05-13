@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+// Farben und Logo je nach Premium-Status
+$is_premium = isset($_SESSION['ist_premium']) && $_SESSION['ist_premium'] == 1;
+$logo = $is_premium ? 'premium.png' : 'logo.png';
+$main_color = $is_premium ? 'gold' : 'red';
+$home_link = $is_premium ? 'premium_home.php' : '../OrdnerHaupt/index.html';
+
 $ausgabe = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $gewicht = isset($_POST['gewicht']) ? (float)$_POST['gewicht'] : 0;
@@ -58,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
             gap: 20px;
             position: relative;
+            box-shadow: 0 4px 8px <?= $main_color ?>;
         }
         .header img {
             height: 80px;
@@ -76,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             right: 60px;
             top: 50%;
             transform: translateY(-50%);
-            background-color: red;
+            background-color: <?= $main_color ?>;
             color: white;
             padding: 10px 20px;
             text-decoration: none;
@@ -84,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: bold;
         }
         .home-button:hover {
-            background-color: #b30000;
+            background-color: <?= $is_premium ? '#d4af37' : '#b30000' ?>;
         }
         .footer {
             background-color: #222;
@@ -92,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 30px;
             color: white;
             margin-top: 60px;
+            box-shadow: 0 -4px 8px <?= $main_color ?>;
         }
         .main-content {
             max-width: 1000px;
@@ -103,14 +112,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 20px;
             margin-bottom: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 10px <?= $main_color ?>;
         }
         .rechner {
             margin-top: 40px;
             background-color: #1a1a1a;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 10px <?= $main_color ?>;
             text-align: center;
         }
         .rechner form {
@@ -126,21 +135,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-row label {
             margin-bottom: 10px;
             font-weight: bold;
-            text-align: center;
             font-size: 1.2em;
-            color: white;
         }
         .form-row input[type="number"],
         .form-row select {
             padding: 12px;
             font-size: 1em;
             border-radius: 6px;
-            border: 2px solid red;
+            border: 2px solid <?= $main_color ?>;
             background-color: #111;
             color: white;
             width: 100%;
             max-width: 320px;
-            box-sizing: border-box;
         }
         .gender-options {
             display: flex;
@@ -153,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         input[type="submit"] {
             padding: 12px 25px;
-            background: red;
+            background: <?= $main_color ?>;
             color: white;
             border: none;
             border-radius: 6px;
@@ -161,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: bold;
         }
         input[type="submit"]:hover {
-            background-color: #b30000;
+            background-color: <?= $is_premium ? '#d4af37' : '#b30000' ?>;
         }
         .empfehlung {
             margin-top: 30px;
@@ -173,9 +179,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
 <div class="header">
-    <img src="logo.png" alt="BeastMode Logo">
+    <img src="<?= $logo ?>" alt="BeastMode Logo">
     <h1>BeastMode</h1>
-    <a href="../OrdnerHaupt/index.html" class="home-button">Zur Hauptseite</a>
+    <a href="<?= $home_link ?>" class="home-button">Zur Hauptseite</a>
 </div>
 
 <div class="main-content">

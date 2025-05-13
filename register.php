@@ -161,6 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
             text-align: center;
             padding: 30px;
+            box-shadow: 0 -4px 8px <?= $shadow_color ?>;
         }
         .footer span {
             color: red;
