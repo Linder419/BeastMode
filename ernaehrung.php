@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Ernährung – BeastMode</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background-color: #111;
@@ -250,11 +251,123 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <?= $ausgabe ?>
     </div>
+
+    <div class="rechner">
+        <h2>Live-Kalorienrechner (Makros)</h2>
+        <div class="form-row">
+            <label for="carbs">Kohlenhydrate (g)</label>
+            <input type="number" id="carbs" class="macro-input">
+        </div>
+        <div class="form-row">
+            <label for="protein">Eiweiß (g)</label>
+            <input type="number" id="protein" class="macro-input">
+        </div>
+        <div class="form-row">
+            <label for="fat">Fett (g)</label>
+            <input type="number" id="fat" class="macro-input">
+        </div>
+        <div class="form-row">
+            <strong>Gesamtkalorien:</strong> <span id="totalCalories">0</span> kcals
+        </div>
+        <div id="macroChartContainer" style="display:none; margin-top: 30px;">
+            <canvas id="macroChart" width="250" height="250" style="max-width:250px; max-height:250px; margin:auto;"></canvas>
+        </div>
+    </div>
 </div>
 
 <div class="footer">
     Entwickelt mit 💪 von Tobias Linder & Aaron Hubmann
 </div>
+
+<script>
+let macroChart;
+
+document.querySelectorAll('.macro-input').forEach(input => {
+    input.addEventListener('input', calculateCalories);
+});
+
+function calculateCalories() {
+    const carbs = parseFloat(document.getElementById('carbs')?.value) || 0;
+    const protein = parseFloat(document.getElementById('protein')?.value) || 0;
+    const fat = parseFloat(document.getElementById('fat')?.value) || 0;
+
+    const calories = (carbs * 4) + (protein * 4) + (fat * 9);
+    const total = document.getElementById('totalCalories');
+    if (total) {
+        total.textContent = calories.toFixed(0);
+    }
+
+    if (carbs > 0 || protein > 0 || fat > 0) {
+        document.getElementById('macroChartContainer').style.display = 'block';
+        const ctx = document.getElementById('macroChart').getContext('2d');
+
+        const data = {
+            labels: ['Kohlenhydrate', 'Eiweiß', 'Fett'],
+            datasets: [{
+                data: [carbs * 4, protein * 4, fat * 9],
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56'],
+                borderWidth: 1
+            }]
+        };
+
+        const options = {
+            cutout: '70%',
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.raw + ' kcal';
+                        }
+                    }
+                },
+                legend: {
+                    labels: {
+                        color: 'white'
+                    }
+                }
+            }
+        };
+
+        if (macroChart) {
+            macroChart.data = data;
+            macroChart.update();
+        } else {
+            macroChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: options,
+                plugins: [{
+                    id: 'centerText',
+                    beforeDraw(chart) {
+                        const {width, height, ctx} = chart;
+                        ctx.save();
+
+                        const calories = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        const text = calories.toFixed(0) + " kcal";
+
+                        ctx.font = "bold 22px Arial";
+                        ctx.fillStyle = "white";
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+
+                        // 🟢 Feinjustierung für perfekte optische Mitte:
+                        ctx.fillText(text, width / 2, height / 2 + 4);
+
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
+    } else {
+        document.getElementById('macroChartContainer').style.display = 'none';
+    }
+}
+</script>
+
+
+
+
+
 
 </body>
 </html>
