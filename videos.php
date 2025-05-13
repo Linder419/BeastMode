@@ -87,6 +87,7 @@ $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <meta charset="UTF-8">
 <title>Video-Upload - BeastMode</title>
 <style>
+    /* Grundlayout */
     html, body {
         margin: 0;
         padding: 0;
@@ -94,29 +95,30 @@ $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         background-color: #111;
         color: white;
     }
+
     .page-container {
         display: flex;
         flex-direction: column;
         min-height: 100vh;
     }
-    .header{
+
+    /* Header/Footer */
+    .header {
         background-color: #222;
         color: white;
         padding: 30px;
         text-align: center;
         box-shadow: 0 4px 8px <?= $shadow_color ?>;
         position: relative;
-        
     }
 
-    .footer{
+    .footer {
         background-color: #222;
         color: white;
         padding: 30px;
         text-align: center;
         position: relative;
         box-shadow: 0 -4px 8px <?= $shadow_color ?>;
-
     }
 
     .header img {
@@ -124,6 +126,7 @@ $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         vertical-align: middle;
         margin-right: 20px;
     }
+
     .header h1 {
         display: inline-block;
         vertical-align: middle;
@@ -131,6 +134,7 @@ $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         text-transform: uppercase;
         margin: 0;
     }
+
     .home-button {
         position: absolute;
         right: 30px;
@@ -143,9 +147,12 @@ $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         border-radius: 6px;
         font-weight: bold;
     }
+
     .home-button:hover {
         background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>;
     }
+
+    /* Hauptinhalt */
     .main-content {
         padding: 40px;
         max-width: 900px;
@@ -153,10 +160,15 @@ $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         flex: 1;
         text-align: center;
     }
-    .upload-form textarea, .upload-form input[type="file"], .upload-form input[type="submit"] {
+
+    /* Formular */
+    .upload-form textarea,
+    .upload-form input[type="file"],
+    .upload-form input[type="submit"] {
         width: 100%;
         margin: 10px 0;
     }
+
     .upload-form textarea {
         padding: 10px;
         background: #222;
@@ -164,6 +176,7 @@ $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         border: 1px solid <?= $main_color ?>;
         border-radius: 6px;
     }
+
     .upload-form input[type="submit"] {
         background-color: <?= $main_color ?>;
         color: white;
@@ -173,42 +186,56 @@ $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         cursor: pointer;
         font-weight: bold;
     }
+
     .upload-form input[type="submit"]:hover {
         background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>;
     }
-    .message { color: limegreen; }
-    .error { color: red; }
+
+    /* Hinweise */
+    .message {
+        color: limegreen;
+    }
+
+    .error {
+        color: red;
+    }
+
+    /* Video-Darstellung */
     video {
         width: 100%;
         max-width: 700px;
+        height: auto;
         margin: 20px 0;
         border: 2px solid <?= $main_color ?>;
         border-radius: 10px;
     }
+
     .video-block {
         margin-bottom: 40px;
     }
+
     .video-info {
         color: #ccc;
         font-size: 0.95em;
     }
 
+    /* Löschen-Button */
     .delete-btn {
-    background-color: <?= $is_premium ? 'gold' : 'darkred' ?>;
-    color: <?= $is_premium ? 'black' : 'white' ?>;
-    border: none;
-    padding: 6px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
-    font-weight: bold;
+        background-color: <?= $is_premium ? 'gold' : 'darkred' ?>;
+        color: <?= $is_premium ? 'black' : 'white' ?>;
+        border: none;
+        padding: 6px 12px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+        font-weight: bold;
     }
 
     .delete-btn:hover {
-    background-color: <?= $is_premium ? '#d4af37' : '#a30000' ?>;
+        background-color: <?= $is_premium ? '#d4af37' : '#a30000' ?>;
     }
-
 </style>
+
 </head>
 <body>
 <div class="page-container">

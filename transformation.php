@@ -85,24 +85,138 @@ $bilder = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <meta charset="UTF-8">
 <title>Transformation - BeastMode</title>
 <style>
-    body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #111; color: white; }
-    .page-container { min-height: 100vh; display: flex; flex-direction: column; }
-    .header { background-color: #222; color: white; padding: 30px; text-align: center; box-shadow: 0 4px 8px <?= $main_color ?>; position: relative; }
-    .footer { background-color: #222; color: white; padding: 30px; text-align: center; position: relative; box-shadow: 0 -4px 8px <?= $main_color ?>}
-    .header img { height: 80px; vertical-align: middle; margin-right: 10px; }
-    .header h1 { display: inline-block; vertical-align: middle; font-size: 2.5em; text-transform: uppercase; margin: 0; }
-    .home-button { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); background-color: <?= $main_color ?>; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; }
-    .home-button:hover { background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>; }
-    .main-content { flex: 1; max-width: 900px; margin: 40px auto; padding: 20px; text-align: center; }
-    .upload-form textarea, .upload-form input[type="file"], .upload-form input[type="submit"] { width: 100%; margin: 10px 0; }
-    .upload-form textarea { padding: 10px; background: #222; color: white; border: 1px solid <?= $main_color ?>; border-radius: 6px; }
-    .upload-form input[type="submit"] { background-color: <?= $main_color ?>; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    .upload-form input[type="submit"]:hover { background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>; }
-    .gallery img { max-width: 100%; max-height: 500px; margin-bottom: 5px; border-radius: 12px; border: 2px solid <?= $main_color ?>; }
-    .entry { margin-bottom: 40px; }
-    .delete-btn { background-color: <?= $main_color ?>; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 5px; margin-top: 10px; font-weight: bold; }
-    .delete-btn:hover { background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>; }
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #111;
+        color: white;
+    }
+
+    .page-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header {
+        background-color: #222;
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 4px 8px <?= $main_color ?>;
+        position: relative;
+    }
+
+    .footer {
+        background-color: #222;
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 -4px 8px <?= $main_color ?>;
+    }
+
+    .header img {
+        height: 80px;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+
+    .header h1 {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 2.5em;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    .home-button {
+        position: absolute;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: <?= $main_color ?>;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    .home-button:hover {
+        background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>;
+    }
+
+    .main-content {
+        flex: 1;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .upload-form textarea,
+    .upload-form input[type="file"],
+    .upload-form input[type="submit"] {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .upload-form textarea {
+        padding: 10px;
+        background: #222;
+        color: white;
+        border: 1px solid <?= $main_color ?>;
+        border-radius: 6px;
+    }
+
+    .upload-form input[type="submit"] {
+        background-color: <?= $main_color ?>;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .upload-form input[type="submit"]:hover {
+        background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>;
+    }
+
+    /* Gallerie-Eintrag */
+    .entry {
+        margin-bottom: 40px;
+    }
+
+    .gallery img,
+    .entry img {
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+        max-height: 500px;
+        margin-bottom: 5px;
+        border-radius: 12px;
+        border: 2px solid <?= $main_color ?>;
+        object-fit: cover;
+    }
+
+    .delete-btn {
+        background-color: <?= $main_color ?>;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    .delete-btn:hover {
+        background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>;
+    }
 </style>
+
 </head>
 <body>
 <div class="page-container">
