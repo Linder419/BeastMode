@@ -1,23 +1,27 @@
 <?php
-session_start();
-require_once('dbConnection.php');
+session_start(); // Startet die PHP-Session, um Benutzerdaten zu speichern und zu verwalten
+require_once('dbConnection.php'); // Verbindet mit der Datenbank über ein externes Script
 
+// Prüft, ob ein Benutzer eingeloggt ist – falls nicht, erfolgt eine Weiterleitung zur Login-Seite
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
+// Speichert die Benutzer-ID aus der Session
 $user_id = $_SESSION['user_id'];
+
+// Optional: Filterdatum aus der URL übernehmen (z. B. für Tagesfilter)
 $filter_date = $_GET['datum'] ?? '';
 
-// Premium-Infos auslesen
+// Premium-Modus prüfen und Einstellungen entsprechend setzen
 $is_premium = isset($_SESSION['ist_premium']) && $_SESSION['ist_premium'] == 1;
-$logo = $is_premium ? 'premium.png' : 'logo.png';
-$main_color = $is_premium ? 'gold' : 'red';
-$shadow_color = $is_premium ? 'gold' : 'red';
-$home_link = $is_premium ? 'premium_home.php' : 'OrdnerHaupt/index.html';
+$logo = $is_premium ? 'premium.png' : 'logo.png';                         // Premium-Logo oder Standard-Logo
+$main_color = $is_premium ? 'gold' : 'red';                               // Premium-Farbe oder Standard-Farbe
+$shadow_color = $main_color;                                              // Schattenfarbe gleich der Hauptfarbe
+$home_link = $is_premium ? 'premium_home.php' : 'OrdnerHaupt/index.html'; // Link zur Startseite je nach Status
 
-// Einzelnen Eintrag löschen
+// Wenn ein POST-Request mit delete_id kommt, wird der Eintrag aus der DB gelöscht
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $delete_id = $_POST['delete_id'];
     try {
@@ -30,20 +34,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     }
 }
 
+// Trainingsdaten aus der Datenbank holen – gefiltert nach Datum oder komplett
 try {
     if ($filter_date) {
-        $stmt = $pdo->prepare("SELECT * FROM trainingseinheiten WHERE user_id = :user_id AND DATE(datum) = :datum ORDER BY datum DESC");
+        $stmt = $pdo->prepare("
+            SELECT * FROM trainingseinheiten 
+            WHERE user_id = :user_id AND DATE(datum) = :datum 
+            ORDER BY datum DESC
+        ");
         $stmt->bindParam(':datum', $filter_date);
     } else {
-        $stmt = $pdo->prepare("SELECT * FROM trainingseinheiten WHERE user_id = :user_id ORDER BY datum DESC");
+        $stmt = $pdo->prepare("
+            SELECT * FROM trainingseinheiten 
+            WHERE user_id = :user_id 
+            ORDER BY datum DESC
+        ");
     }
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->execute();
-    $eintraege = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $eintraege = $stmt->fetchAll(PDO::FETCH_ASSOC); // Holt alle Datensätze
 } catch (PDOException $e) {
     die("Datenbankfehler: " . htmlspecialchars($e->getMessage()));
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="de">
@@ -184,69 +211,72 @@ try {
         text-decoration: none;
         display: inline-block;
         font-weight: bold;
-
     }
     .button-red:hover {
         background-color: <?= $main_color === 'gold' ? '#d4af37' : '#b30000' ?>;
-    }
-    .footer {
-        background-color: #222;
-        color: white;
-        padding: 30px;
-        text-align: center;
-        margin-top: auto;
-        box-shadow: 0 -4px 8px <?= $shadow_color ?>;
     }
 </style>
 </head>
 <body>
 <div class="page-container">
+
+    <!-- Kopfbereich: Logo, Titel und dynamischer Link zur Startseite -->
     <div class="header">
-        <img src="<?= $logo ?>" alt="BeastMode Logo">
+        <img src="<?= $logo ?>" alt="BeastMode Logo"> <!-- Premium- oder Standard-Logo -->
         <h1>BeastMode</h1>
-        <a href="<?= $home_link ?>" class="home-button">Zur Hauptseite</a>
+        <a href="<?= $home_link ?>" class="home-button">Zur Hauptseite</a> <!-- Premium-User landen auf anderer Startseite -->
     </div>
 
     <div class="main-content">
         <h2>Deine Trainingseinträge</h2>
 
+        <!-- Formular zum Filtern nach Datum, GET überträgt das Datum in der URL -->
         <form method="GET" class="filter-form">
             <input type="date" name="datum" value="<?= htmlspecialchars($filter_date) ?>">
             <button type="submit">Filtern</button>
         </form>
 
         <?php if (count($eintraege) === 0): ?>
+            <!-- Falls keine Ergebnisse vorhanden sind -->
             <p>Keine Einträge gefunden für dieses Datum.</p>
-            <a href="hauptseite.php" class="button-red">Übung eingeben</a>
+            <a href="hauptseite.php" class="button-red">Übung eingeben</a> <!-- Link zum Trainingseingabeformular -->
+
         <?php else: ?>
+            <!-- Tabelle mit allen gefundenen Einträgen -->
             <table>
                 <thead>
                     <tr>
                         <th>Datum</th>
                         <th>Übung</th>
                         <th>Gewicht (kg)</th>
-                        <th>Wdh.</th>
-                        <th>Satz</th>
-                        <th>Aktion</th>
+                        <th>Wdh.</th> <!-- Wiederholungen -->
+                        <th>Satz</th> <!-- Anzahl der Sätze -->
+                        <th>Aktion</th> <!-- Löschen-Funktion -->
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
-                    $last_uebung = null;
+                    $last_uebung = null; // Hilfsvariable: merkt sich letzte Übung für optischen Trenner
                     foreach ($eintraege as $eintrag): 
+                    
+                        // Wenn aktuelle Übung ungleich der letzten → Leerzeile zwischen den Gruppen
                         if ($last_uebung !== null && $last_uebung !== $eintrag['uebung']) {
                             echo '<tr class="spacer-row"><td colspan="6"></td></tr>';
                         }
                         $last_uebung = $eintrag['uebung'];
                     ?>
                         <tr>
+                            <!-- Datum in deutschem Format anzeigen -->
                             <td><?= htmlspecialchars(date("d.m.Y H:i", strtotime($eintrag['datum']))) ?></td>
                             <td><?= htmlspecialchars($eintrag['uebung']) ?></td>
                             <td><?= htmlspecialchars($eintrag['gewicht']) ?></td>
                             <td><?= htmlspecialchars($eintrag['wiederholungen']) ?></td>
                             <td><?= htmlspecialchars($eintrag['saetze']) ?></td>
                             <td>
+                                <!-- Formular zum Löschen eines Eintrags (per POST) -->
                                 <form method="POST" class="delete-form" onsubmit="return confirm('Eintrag wirklich löschen?');">
+
+                                    <!-- Übergibt die ID des Eintrags an das Backend -->
                                     <input type="hidden" name="delete_id" value="<?= $eintrag['id'] ?>">
                                     <button type="submit" class="delete-btn">Löschen</button>
                                 </form>
@@ -258,9 +288,11 @@ try {
         <?php endif; ?>
     </div>
 
+    <!-- Fußzeile mit Entwickler-Info -->
     <div class="footer">
         Entwickelt mit 💪 von Tobias Linder & Aaron Hubmann
     </div>
+
 </div>
 </body>
 </html>

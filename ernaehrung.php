@@ -8,7 +8,11 @@ $main_color = $is_premium ? 'gold' : 'red';
 $home_link = $is_premium ? 'premium_home.php' : '../OrdnerHaupt/index.html';
 
 $ausgabe = "";
+
+// Wenn das Formular abgeschickt wurde:
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Eingaben aus dem Formular lesen
     $gewicht = isset($_POST['gewicht']) ? (float)$_POST['gewicht'] : 0;
     $groesse = isset($_POST['groesse']) ? (float)$_POST['groesse'] : 0;
     $alter = isset($_POST['alter']) ? (int)$_POST['alter'] : 0;
@@ -16,19 +20,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ziel = $_POST['ziel'] ?? '';
     $geschlecht = $_POST['geschlecht'] ?? '';
 
+    // Wenn alle Werte vorhanden sind:
     if ($gewicht && $groesse && $alter && $trainingstage && $ziel && $geschlecht) {
+
+        // Grundumsatz berechnen
         $bmr = ($geschlecht === 'm') ?
             66.47 + (13.7 * $gewicht) + (5.0 * $groesse) - (6.8 * $alter) :
             655.1 + (9.6 * $gewicht) + (1.8 * $groesse) - (4.7 * $alter);
 
+        // Aktivitätsfaktor basierend auf Trainingstagen
         $aktivitaetsfaktor = 1.2 + ($trainingstage * 0.1);
         if ($aktivitaetsfaktor > 1.9) $aktivitaetsfaktor = 1.9;
 
+        // Gesamtbedarf
         $kalorienbedarf = $bmr * $aktivitaetsfaktor;
 
+        // Zielanpassung
         if ($ziel === 'abnehmen') $kalorienbedarf -= 300;
         elseif ($ziel === 'zunehmen') $kalorienbedarf += 300;
 
+        // Makronährstoffe berechnen
         $protein = $gewicht * 2;
         $fett = $gewicht * 1;
         $kcalProtein = $protein * 4;
@@ -36,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $kcalKohlenhydrate = $kalorienbedarf - $kcalProtein - $kcalFett;
         $kohlenhydrate = $kcalKohlenhydrate / 4;
 
+        // Ausgabe vorbereiten
         $ausgabe = "<div class='empfehlung'>
             <strong>Täglicher Bedarf:</strong><br>
             " . round($kalorienbedarf) . " kcal<br>
@@ -46,6 +58,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -279,24 +314,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Entwickelt mit 💪 von Tobias Linder & Aaron Hubmann
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
 let macroChart;
 
+// EventListener für alle Eingabefelder mit Klasse 'macro-input'
 document.querySelectorAll('.macro-input').forEach(input => {
     input.addEventListener('input', calculateCalories);
 });
 
 function calculateCalories() {
+    // Werte auslesen oder 0 setzen
     const carbs = parseFloat(document.getElementById('carbs')?.value) || 0;
     const protein = parseFloat(document.getElementById('protein')?.value) || 0;
     const fat = parseFloat(document.getElementById('fat')?.value) || 0;
 
+    // Berechnung der Gesamtkalorien (4 kcal/g für Kohlenhydrate & Protein, 9 kcal/g für Fett)
     const calories = (carbs * 4) + (protein * 4) + (fat * 9);
+
+    // Textanzeige aktualisieren
     const total = document.getElementById('totalCalories');
     if (total) {
         total.textContent = calories.toFixed(0);
     }
 
+    // Wenn irgendein Makro eingegeben ist, zeige das Diagramm an
     if (carbs > 0 || protein > 0 || fat > 0) {
         document.getElementById('macroChartContainer').style.display = 'block';
         const ctx = document.getElementById('macroChart').getContext('2d');
@@ -304,7 +357,7 @@ function calculateCalories() {
         const data = {
             labels: ['Kohlenhydrate', 'Eiweiß', 'Fett'],
             datasets: [{
-                data: [carbs * 4, protein * 4, fat * 9],
+                data: [carbs * 4, protein * 4, fat * 9], // kcal pro Makronährstoff
                 backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56'],
                 borderWidth: 1
             }]
@@ -328,10 +381,12 @@ function calculateCalories() {
             }
         };
 
+        // Wenn bereits ein Chart existiert, update ihn
         if (macroChart) {
             macroChart.data = data;
             macroChart.update();
         } else {
+            // Neues Donut-Chart erstellen
             macroChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: data,
@@ -350,7 +405,7 @@ function calculateCalories() {
                         ctx.textAlign = "center";
                         ctx.textBaseline = "middle";
 
-                        // 🟢 Feinjustierung für perfekte optische Mitte:
+                        // Zentrierten Text in der Mitte des Donuts anzeigen
                         ctx.fillText(text, width / 2, height / 2 + 4);
 
                         ctx.restore();
@@ -359,15 +414,11 @@ function calculateCalories() {
             });
         }
     } else {
+        // Keine Eingaben: Diagramm ausblenden
         document.getElementById('macroChartContainer').style.display = 'none';
     }
 }
 </script>
-
-
-
-
-
 
 </body>
 </html>

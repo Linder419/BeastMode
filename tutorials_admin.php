@@ -1,24 +1,28 @@
 <?php
-session_start();
-require_once('dbConnection.php');
+session_start(); // Session starten, um Benutzerdaten zu speichern
+require_once('dbConnection.php'); // Verbindung zur Datenbank
 
-// Nur eingeloggte Benutzer erlauben
+// Nur eingeloggte Benutzer dürfen diese Seite sehen
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
-$meldung = "";
+$meldung = ""; // Variable für Erfolg/Fehlermeldung vorbereiten
 
+// Wenn Formular abgeschickt wurde
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Eingaben aus dem Formular bereinigen
     $titel = trim($_POST['titel']);
     $link = trim($_POST['link']);
     $beschreibung = trim($_POST['beschreibung']);
     $kategorie = trim($_POST['kategorie']);
     $suchbegriffe = trim($_POST['suchbegriffe']);
 
+    // Prüfen ob Titel und Link vorhanden sind
     if ($titel && $link) {
         try {
+            // Datenbankeintrag vorbereiten und ausführen
             $stmt = $pdo->prepare("INSERT INTO tutorials (titel, link, beschreibung, kategorie, suchbegriffe) 
                                    VALUES (:titel, :link, :beschreibung, :kategorie, :suchbegriffe)");
             $stmt->execute([
@@ -28,15 +32,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'kategorie' => $kategorie,
                 'suchbegriffe' => $suchbegriffe
             ]);
-            $meldung = "Tutorial erfolgreich gespeichert! ✅";
+            $meldung = "Tutorial erfolgreich gespeichert! ✅"; // Erfolgsmeldung
         } catch (PDOException $e) {
-            $meldung = "Fehler: " . $e->getMessage();
+            $meldung = "Fehler: " . $e->getMessage(); // Fehler anzeigen, wenn DB-Abfrage fehlschlägt
         }
     } else {
-        $meldung = "Titel und Link sind Pflichtfelder!";
+        $meldung = "Titel und Link sind Pflichtfelder!"; // Warnung bei leeren Pflichtfeldern
     }
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="de">
@@ -44,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Tutorial hinzufügen</title>
     <style>
+        /* Grund-Design in dunklem Stil */
         body {
             background-color: #111;
             color: white;
@@ -52,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 0;
         }
 
+        /* Hauptbox für Formular */
         .container {
             max-width: 700px;
             margin: 100px auto 40px;
@@ -66,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 30px;
         }
 
+        /* Labels für Eingabefelder */
         label {
             display: block;
             margin-top: 15px;
@@ -73,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: bold;
         }
 
+        /* Eingabefelder und Textbereiche */
         input[type="text"],
         textarea {
             width: 100%;
@@ -87,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             resize: vertical;
         }
 
+        /* Absende-Button */
         input[type="submit"] {
             margin-top: 20px;
             padding: 10px 25px;
@@ -102,12 +129,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #b30000;
         }
 
+        /* Ausgabe von Erfolgs- oder Fehlermeldungen */
         .meldung {
             text-align: center;
             margin-top: 20px;
             color: limegreen;
         }
 
+        /* Kopf- und Fußzeile */
         .header, .footer {
             background-color: #222;
             padding: 30px;
@@ -118,17 +147,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
+<!-- Kopfzeile -->
 <div class="header">
     <h1>BeastMode – Admin Tutorial hinzufügen</h1>
 </div>
 
+<!-- Hauptinhalt mit Formular -->
 <div class="container">
     <h2>Neues Tutorial eintragen</h2>
 
+    <!-- Erfolg / Fehler anzeigen -->
     <?php if ($meldung): ?>
         <div class="meldung"><?= htmlspecialchars($meldung) ?></div>
     <?php endif; ?>
 
+    <!-- Formular zur Eingabe eines Tutorials -->
     <form method="POST">
         <label for="titel">Titel*</label>
         <input type="text" name="titel" id="titel" required>
@@ -149,6 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </div>
 
+<!-- Fußzeile -->
 <div class="footer">
     Entwickelt mit 💪 von Tobias Linder & Aaron Hubmann
 </div>

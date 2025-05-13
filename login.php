@@ -1,23 +1,35 @@
 <?php
-session_start();
-require_once('dbConnection.php');
+session_start(); // Session starten, um Benutzerdaten zu speichern
+require_once('dbConnection.php'); // Datenbankverbindung einbinden
 
+
+// Falls der Nutzer bereits eingeloggt ist, weiterleiten zur Hauptseite
 if (isset($_SESSION['user_id'])) {
     header('Location: OrdnerHaupt/index.html');
     exit();
 }
 
-$error = "";
+$error = ""; // Variable für mögliche Fehlermeldungen vorbereiten
+
+// Wenn das Formular abgesendet wurde
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Benutzereingaben auslesen und absichern
     $username = trim(htmlspecialchars($_POST['username']));
     $email = trim(htmlspecialchars($_POST['email']));
     $password = trim(htmlspecialchars($_POST['password']));
 
+    // Prüfen, ob alle Felder ausgefüllt sind
     if (!empty($username) && !empty($email) && !empty($password)) {
+
+        // E-Mail-Format validieren
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = "Bitte eine gültige E-Mail-Adresse eingeben.";
         } else {
+
             try {
+
+                // Abfrage vorbereiten: existiert Benutzer mit Benutzernamen und E-Mail?
                 $stmt = $pdo->prepare("SELECT id, passwort, ist_premium FROM benutzer WHERE benutzername = :username AND email = :email");
                 $stmt->bindParam(':username', $username, PDO::PARAM_STR);
                 $stmt->bindParam(':email', $email, PDO::PARAM_STR);
@@ -25,14 +37,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+                // Wenn Benutzer gefunden und Passwort korrekt ist
                 if ($user && password_verify($password, $user['passwort'])) {
+
+                    // Sitzungsdaten setzen
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
-                    $_SESSION['ist_premium'] = $user['ist_premium']; // merken!
+                    $_SESSION['ist_premium'] = $user['ist_premium'];
 
+                    // Cookies setzen (z. B. für Benutzername und ID)
                     setcookie('benutzername', $username, time() + 3600);
                     setcookie('benutzer_id', $user['id'], time() + 3600);
 
+                    // Weiterleitung je nach Premiumstatus
                     if ($user['ist_premium'] == 1) {
                         header('Location: ../premium_home.php');
                     } else {
@@ -40,17 +57,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     exit();
                 } else {
+
+                    // Fehler, wenn Benutzer nicht gefunden oder Passwort falsch
                     $error = "Benutzername, E-Mail oder Passwort ist falsch.";
                 }
+
             } catch (PDOException $e) {
+
+                // Fehler beim Zugriff auf die Datenbank
                 $error = "Datenbankfehler: " . htmlspecialchars($e->getMessage());
             }
         }
     } else {
+
+        // Fehler, wenn Eingaben fehlen
         $error = "Bitte alle Felder ausfüllen.";
     }
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -58,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BeastMode-Login</title>
     <style>
+
         html, body {
             margin: 0;
             padding: 0;
@@ -166,31 +212,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
+
+<!-- Seitenaufbau mit Header, Inhalt und Footer -->
 <div class="page-container">
+
+    <!-- Kopfzeile mit Logo -->
     <div class="header">
         <img src="logo.png" alt="BeastMode Logo">
         <h1>BeastMode</h1>
     </div>
 
+    <!-- Hauptbereich mit Loginformular -->
     <div class="main-content">
         <div class="login-form">
             <h2>Anmeldung</h2>
+
+            <!-- Fehlermeldung anzeigen, falls vorhanden -->
             <?php if (!empty($error)) { echo "<p class='error'>" . htmlspecialchars($error) . "</p>"; } ?>
+
+            <!-- Eingabeformular -->
             <form method="POST">
                 <input type="text" name="username" placeholder="Benutzername" required autofocus>
                 <input type="email" name="email" placeholder="E-Mail-Adresse" required>
                 <input type="password" name="password" placeholder="Passwort" required>
                 <button type="submit">Anmelden</button>
             </form>
+
+            <!-- Link zur Registrierung -->
             <div class="register-link">
                 <p>Noch kein Konto? <a href="register.php">Hier registrieren</a></p>
             </div>
         </div>
     </div>
 
+    <!-- Fußzeile mit Entwicklerinformation -->
     <div class="footer">
         Entwickelt mit 💪 von <span>Tobias Linder</span> & <span>Aaron Hubmann</span>
     </div>
+
 </div>
 </body>
 </html>
